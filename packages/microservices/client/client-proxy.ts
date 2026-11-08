@@ -235,7 +235,8 @@ export abstract class ClientProxy<
     prop: Attribute,
     defaultValue: DefaultValue = undefined as DefaultValue,
   ) {
-    return obj && prop in obj ? (obj as any)[prop] : defaultValue;
+    const value = obj ? (obj as any)[prop] : undefined;
+    return value === undefined ? defaultValue : value;
   }
 
   protected normalizePattern(pattern: MsPattern): string {

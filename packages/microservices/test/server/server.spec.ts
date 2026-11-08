@@ -418,6 +418,35 @@ describe('Server', () => {
     });
   });
 
+  describe('getOptionsProp', () => {
+    it('should return value when prop exists', () => {
+      const options = { host: 'localhost' } as any;
+      expect(server.getOptionsProp(options, 'host', 'default-host')).toBe(
+        'localhost',
+      );
+    });
+
+    it('should return defaultValue when prop does not exist', () => {
+      expect(server.getOptionsProp({} as any, 'host', 'default-host')).toBe(
+        'default-host',
+      );
+    });
+
+    it('should return defaultValue when prop is undefined', () => {
+      const options = { host: undefined } as any;
+      expect(server.getOptionsProp(options, 'host', 'default-host')).toBe(
+        'default-host',
+      );
+    });
+
+    it('should keep falsy values other than undefined', () => {
+      const options = { port: 0, host: '', noAck: false } as any;
+      expect(server.getOptionsProp(options, 'port', 3000)).toBe(0);
+      expect(server.getOptionsProp(options, 'host', 'h')).toBe('');
+      expect(server.getOptionsProp(options, 'noAck', true)).toBe(false);
+    });
+  });
+
   describe('assertValidPacketId', () => {
     it('should accept a number or a string of up to 256 characters', () => {
       for (const id of [1, 'a'.repeat(256)]) {

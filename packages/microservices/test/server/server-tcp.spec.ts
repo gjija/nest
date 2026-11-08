@@ -42,6 +42,14 @@ describe('ServerTCP', () => {
     untypedServer = server as any;
   });
 
+  describe('constructor', () => {
+    it('should use the default host and port when they are undefined', () => {
+      const server = new ServerTCP({ host: undefined, port: undefined });
+      expect(server['host']).toBe('localhost');
+      expect(server['port']).toBe(3000);
+    });
+  });
+
   describe('bindHandler', () => {
     let socket: { on: ReturnType<typeof vi.fn> };
 

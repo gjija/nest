@@ -359,6 +359,22 @@ describe('ClientProxy', function () {
         client['getOptionsProp'](undefined as any, 'host' as any, 'fallback'),
       ).toBe('fallback');
     });
+
+    it('should return defaultValue when prop is undefined', () => {
+      const options = { host: undefined } as any;
+      expect(
+        client['getOptionsProp'](options, 'host' as any, 'default-host'),
+      ).toBe('default-host');
+    });
+
+    it('should keep falsy values other than undefined', () => {
+      const options = { port: 0, host: '', noAck: false } as any;
+      expect(client['getOptionsProp'](options, 'port' as any, 3000)).toBe(0);
+      expect(client['getOptionsProp'](options, 'host' as any, 'h')).toBe('');
+      expect(client['getOptionsProp'](options, 'noAck' as any, true)).toBe(
+        false,
+      );
+    });
   });
 
   describe('status', () => {

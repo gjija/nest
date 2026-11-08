@@ -19,6 +19,13 @@ describe('ServerRMQ', () => {
     untypedServer = server as any;
   });
 
+  describe('constructor', () => {
+    it('should use the default noAck when it is undefined', () => {
+      const server = new ServerRMQ({ noAck: undefined });
+      expect(server['noAck']).toBe(true);
+    });
+  });
+
   describe('listen', () => {
     let createClient: ReturnType<typeof vi.fn>;
     let onStub: ReturnType<typeof vi.fn>;
