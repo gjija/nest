@@ -1527,5 +1527,22 @@ describe('InstanceWrapper', () => {
       expect(wrapper.inject).toBeNull();
       expect(wrapper.metatype).toBe(TestClass);
     });
+
+    it.each([
+      ['value', { useValue: new TestClass() }],
+      ['class', { useClass: TestClass }],
+      ['factory', { useFactory: () => new TestClass() }],
+    ])(
+      'should no longer be an alias once overridden by a %s provider',
+      (_, override) => {
+        const wrapper = new InstanceWrapper({
+          metatype: (instance => instance) as any,
+          inject: ['aliased'],
+          isAlias: true,
+        });
+        wrapper.mergeWith({ provide: 'token', ...override });
+        expect(wrapper.isAlias).toBe(false);
+      },
+    );
   });
 });

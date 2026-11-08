@@ -252,6 +252,43 @@ describe('TestingModuleBuilder', () => {
       expect(service).toBeInstanceOf(MockService);
     });
 
+    it('should call the lifecycle hooks of an override of a useExisting provider', async () => {
+      const calls: string[] = [];
+
+      @Injectable()
+      class OriginalService {}
+
+      class MockService {
+        onModuleInit() {
+          calls.push('init');
+        }
+        onModuleDestroy() {
+          calls.push('destroy');
+        }
+      }
+
+      @ModuleDecorator({
+        providers: [
+          OriginalService,
+          { provide: 'SERVICE', useExisting: OriginalService },
+        ],
+      })
+      class TestModule {}
+
+      const module = await Test.createTestingModule({
+        imports: [TestModule],
+      })
+        .overrideProvider('SERVICE')
+        .useClass(MockService)
+        .compile();
+
+      await module.init();
+      await module.close();
+
+      expect(module.get('SERVICE')).toBeInstanceOf(MockService);
+      expect(calls).toEqual(['init', 'destroy']);
+    });
+
     it('should support overriding a request-scoped provider with useClass', async () => {
       @Injectable({ scope: Scope.REQUEST })
       class OriginalService {}
